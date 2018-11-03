@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from post import Post
+from paths import *
 
 PAD_TOKEN = "*$*PAD*$*"
 UNK_TOKEN = "*$*UNK*$*"
@@ -14,7 +15,7 @@ def create_batches(posts, w2i, a2i, pad_tnk=PAD_TOKEN, unk_tkn=UNK_TOKEN, unk_au
     :param w2i: a word-to-index dictionary with all embedded words that will be used in training
     :param pad_tnk: the pad token
     :param unk_tkn: the unknown token
-    :param batch_size: haow many posts will be in every batch
+    :param batch_size: how many posts will be in every batch
     :param max_len: the padding size for the texts
     :param title_max_len: the padding size for the title
     :param sort_data: boolean indicating if the list of posts  will be sorted by the size of the text
@@ -48,7 +49,7 @@ def create_batches(posts, w2i, a2i, pad_tnk=PAD_TOKEN, unk_tkn=UNK_TOKEN, unk_au
     return batches
 
 
-def get_embeddings(path='../input/embeddings/glove.6B.%dd.txt', size=50):
+def get_embeddings(path=EMBEDDINGS_FOLDER, size=50):
     """
     :param path: the directory where all glove embeddings are stored.
     glove embeddings can be downloaded from https://nlp.stanford.edu/projects/glove/
@@ -231,7 +232,7 @@ def generate_data(split_point, emb_size, min_freq=1, min_author_freq=3,
     :param title_maxlen: the padding size of title
     :return: train_posts, test_posts, w2i, emb_matrix, train_batches, test_batches
     """
-    df = load_posts("../input/fake_news_data/train.csv")
+    df = load_posts(TRAIN_DATA_FOLDER)
     posts = get_posts(df)
     train_posts, test_posts = split_data(posts, split_point)
     print('posts for training:', len(train_posts))
