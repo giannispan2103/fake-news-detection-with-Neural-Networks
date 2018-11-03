@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 from post import Post
-from paths import *
-
+from paths import EMBEDDINGS_FOLDER, TRAIN_DATA_PATH
 PAD_TOKEN = "*$*PAD*$*"
 UNK_TOKEN = "*$*UNK*$*"
 UNK_AUTHOR = "Nan"
@@ -15,7 +14,7 @@ def create_batches(posts, w2i, a2i, pad_tnk=PAD_TOKEN, unk_tkn=UNK_TOKEN, unk_au
     :param w2i: a word-to-index dictionary with all embedded words that will be used in training
     :param pad_tnk: the pad token
     :param unk_tkn: the unknown token
-    :param batch_size: how many posts will be in every batch
+    :param batch_size: haow many posts will be in every batch
     :param max_len: the padding size for the texts
     :param title_max_len: the padding size for the title
     :param sort_data: boolean indicating if the list of posts  will be sorted by the size of the text
@@ -41,10 +40,10 @@ def create_batches(posts, w2i, a2i, pad_tnk=PAD_TOKEN, unk_tkn=UNK_TOKEN, unk_au
                                                                title_max_len, pad_tkn=pad_tnk), unk_token=unk_tkn))
             batch_authors.append(get_indexed_value(a2i, posts[i].author, unk_author))
             batch_labels.append(posts[i].label)
-        batches.append({'text':np.array(batch_texts),
-                        'title':np.array(batch_titles),
-                        'author':np.array(batch_authors),
-                        'label':np.array(batch_labels, dtype='float32')})
+        batches.append({'text': np.array(batch_texts),
+                        'title': np.array(batch_titles),
+                        'author': np.array(batch_authors),
+                        'label': np.array(batch_labels, dtype='float32')})
         offset += batch_size
     return batches
 
@@ -232,7 +231,7 @@ def generate_data(split_point, emb_size, min_freq=1, min_author_freq=3,
     :param title_maxlen: the padding size of title
     :return: train_posts, test_posts, w2i, emb_matrix, train_batches, test_batches
     """
-    df = load_posts(TRAIN_DATA_FOLDER)
+    df = load_posts(TRAIN_DATA_PATH)
     posts = get_posts(df)
     train_posts, test_posts = split_data(posts, split_point)
     print('posts for training:', len(train_posts))

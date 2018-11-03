@@ -1,5 +1,4 @@
 from sklearn.metrics import roc_auc_score
-import torch.nn.functional as F
 import numpy as np
 import torch
 from torch.autograd import Variable
@@ -63,7 +62,7 @@ def evaluate(model, test_batches):
         for inp in model.input_list:
             data.append(Variable(torch.from_numpy(batch[inp])))
         outputs = model(*data)
-        outputs = F.sigmoid(outputs)
+        outputs = torch.sigmoid(outputs)
         labels_list.extend(batch['label'].tolist())
         scores_list.extend(outputs.data.view(-1).tolist())
 
@@ -72,8 +71,8 @@ def evaluate(model, test_batches):
 
 
 def save_model(model):
-    torch.save(model.state_dict(), MODELS_PATH+ model.name + ".mdl")
+    torch.save(model.state_dict(), MODELS_PATH + model.name + ".mdl")
 
 
 def load_model(model):
-    model.load_state_dict(torch.load(MODELS_PATH+ model.name + ".mdl"))
+    model.load_state_dict(torch.load(MODELS_PATH + model.name + ".mdl"))

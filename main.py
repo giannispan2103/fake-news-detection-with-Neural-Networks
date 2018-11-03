@@ -17,7 +17,7 @@ def run_text():
 
 
 def run_text_title_author():
-    data = generate_data(split_point=15000, emb_size=50, maxlen=25)
+    data = generate_data(split_point=15000, emb_size=50, maxlen=100)
     a2i = data['a2i']
     emb_matrix = data['emb_matrix']
     train_batches = data['train_batches']
@@ -30,4 +30,5 @@ def run_text_title_author():
 
 
 if __name__ == "__main__":
-    run_text_title_author()
+    run_text()
+    # run_text_title_author()
