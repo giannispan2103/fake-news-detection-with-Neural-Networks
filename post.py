@@ -1,29 +1,37 @@
 import re
 
 
-def clean_en(text, lower=True):
-    """
-    Tokenization/string cleaning for all datasets.
-    Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
-    :param text: The string to be cleaned
-    :param lower: If True text is converted to lower case
-    :return: The clean string
-    """
-    text = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", text)
-    text = re.sub(r"\'s", " \'s", text)
-    text = re.sub(r"\'ve", " \'ve", text)
-    text = re.sub(r"n\'t", " n\'t", text)
-    text = re.sub(r"\'re", " \'re", text)
-    text = re.sub(r"\'d", " \'d", text)
-    text = re.sub(r"\'ll", " \'ll", text)
-    text = re.sub(r",", " , ", text)
-    text = re.sub(r"!", " ! ", text)
-    text = re.sub(r"\(", " \( ", text)
-    text = re.sub(r"\)", " \) ", text)
-    text = re.sub(r"\?", " \? ", text)
-    text = re.sub(r"\s{2,}", " ", text)
-    return text.strip().lower().encode('utf-8') if lower else text.strip().encode('utf-8')
+# def clean_en(text, lower=True):
+#     """
+#     Tokenization/string cleaning for all datasets.
+#     Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
+#     :param text: The string to be cleaned
+#     :param lower: If True text is converted to lower case
+#     :return: The clean string
+#     """
+#     text = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", text)
+#     text = re.sub(r"\'s", " \'s", text)
+#     text = re.sub(r"\'ve", " \'ve", text)
+#     text = re.sub(r"n\'t", " n\'t", text)
+#     text = re.sub(r"\'re", " \'re", text)
+#     text = re.sub(r"\'d", " \'d", text)
+#     text = re.sub(r"\'ll", " \'ll", text)
+#     text = re.sub(r",", " , ", text)
+#     text = re.sub(r"!", " ! ", text)
+#     text = re.sub(r"\(", " \( ", text)
+#     text = re.sub(r"\)", " \) ", text)
+#     text = re.sub(r"\?", " \? ", text)
+#     text = re.sub(r"\s{2,}", " ", text)
+#     return text.strip().lower().encode('utf-8') if lower else text.strip().encode('utf-8')
 
+
+def clean_en(string, lower=False):
+    """
+    Tokenization/string cleaning for the SST dataset
+    """
+    string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)   
+    string = re.sub(r"\s{2,}", " ", string)    
+    return string.strip().lower() if lower else string.strip()
 
 class Post(object):
     """

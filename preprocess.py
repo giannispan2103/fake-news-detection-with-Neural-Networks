@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from post import Post
-
+from paths import *
 PAD_TOKEN = "*$*PAD*$*"
 UNK_TOKEN = "*$*UNK*$*"
 UNK_AUTHOR = "Nan"
@@ -48,7 +48,7 @@ def create_batches(posts, w2i, a2i, pad_tnk=PAD_TOKEN, unk_tkn=UNK_TOKEN, unk_au
     return batches
 
 
-def get_embeddings(path='../input/embeddings/glove.6B.%dd.txt', size=50):
+def get_embeddings(path=EMBEDDINGS_FOLDER, size=50):
     """
     :param path: the directory where all glove embeddings are stored.
     glove embeddings can be downloaded from https://nlp.stanford.edu/projects/glove/
@@ -57,7 +57,7 @@ def get_embeddings(path='../input/embeddings/glove.6B.%dd.txt', size=50):
     """
     embeddings_dict = {}
     f_path = path % size
-    with open(f_path) as f:
+    with open(f_path,'r', encoding='utf8') as f:
         for line in f:
                 values = line.split()
                 word = values[0]
@@ -231,7 +231,7 @@ def generate_data(split_point, emb_size, min_freq=1, min_author_freq=3,
     :param title_maxlen: the padding size of title
     :return: train_posts, test_posts, w2i, emb_matrix, train_batches, test_batches
     """
-    df = load_posts("../input/fake_news_data/train.csv")
+    df = load_posts(TRAIN_DATA_PATH)
     posts = get_posts(df)
     train_posts, test_posts = split_data(posts, split_point)
     print('posts for training:', len(train_posts))
