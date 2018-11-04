@@ -1,12 +1,12 @@
 from sklearn.metrics import roc_auc_score
-import torch.nn.functional as F
+# import torch.nn.functional as F
 import numpy as np
 import torch
 from torch.autograd import Variable
 from time import time
 
 
-def train(model, train_batches, test_batches, optimizer, criterion, epochs, init_patience):
+def train(model, train_batches, test_batches, optimizer, criterion, epochs, init_patience, cuda):
     """
     :param model: a deep model
     :param train_batches: the batches that will be used for training
@@ -21,7 +21,7 @@ def train(model, train_batches, test_batches, optimizer, criterion, epochs, init
     patience = init_patience
     for i in range(1, epochs+1):
         start = time()
-        val_auc = run_epoch(model, train_batches, test_batches, optimizer, criterion)
+        val_auc = run_epoch(model, train_batches, test_batches, optimizer, criterion, cuda)
         end = time()
         print('epoch %d, auc: %2.3f. Time: %d minutes, %d seconds' % (i, 100 * val_auc, (end - start) /60, (end - start) % 60))
         if best_auc < val_auc:
@@ -36,7 +36,7 @@ def train(model, train_batches, test_batches, optimizer, criterion, epochs, init
             break
 
 
-def run_epoch(model, train_batches, test_batches, optimizer, criterion):
+def run_epoch(model, train_batches, test_batches, optimizer, criterion, cuda):
     model.train(True)
     perm = np.random.permutation(len(train_batches))
     for i in perm:
@@ -44,26 +44,34 @@ def run_epoch(model, train_batches, test_batches, optimizer, criterion):
         inner_perm = np.random.permutation(len(batch['text']))
         data = []
         for inp in model.input_list:
-            data.append(Variable(torch.from_numpy(batch[inp][inner_perm])))
-        labels = Variable(torch.from_numpy(batch['label'][inner_perm]))
+            tensor_inp = torch.from_numpy(batch[inp][inner_perm])
+            tensor_inp = tensor_inp.long().cuda() if cuda else tensor_inp.long().cuda()
+            data.append(Variable(tensor_inp))
+            #data.append(Variable(torch.from_numpy(batch[inp][inner_perm])))
+        
+        labels = Variable(torch.from_numpy(batch['label'][inner_perm]).cuda()) if cuda else  Variable(torch.from_numpy(batch['label'][inner_perm]))
         outputs = model(*data)
         loss = criterion(outputs.view(-1), labels)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-    return evaluate(model, test_batches)
+    return evaluate(model, test_batches, cuda)
 
 
-def evaluate(model, test_batches):
+def evaluate(model, test_batches, cuda):
     model.train(False)
     scores_list = []
     labels_list = []
     for batch in test_batches:
         data = []
         for inp in model.input_list:
-            data.append(Variable(torch.from_numpy(batch[inp])))
+            if cuda:
+                data.append(Variable(torch.from_numpy(batch[inp]).long().cuda()))
+            else:
+                data.append(Variable(torch.from_numpy(batch[inp]).long()))
+            
         outputs = model(*data)
-        outputs = F.sigmoid(outputs)
+        outputs = torch.sigmoid(outputs)
         labels_list.extend(batch['label'].tolist())
         scores_list.extend(outputs.data.view(-1).tolist())
 

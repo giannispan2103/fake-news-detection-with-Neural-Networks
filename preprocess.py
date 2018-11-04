@@ -40,9 +40,9 @@ def create_batches(posts, w2i, a2i, pad_tnk=PAD_TOKEN, unk_tkn=UNK_TOKEN, unk_au
                                                                title_max_len, pad_tkn=pad_tnk), unk_token=unk_tkn))
             batch_authors.append(get_indexed_value(a2i, posts[i].author, unk_author))
             batch_labels.append(posts[i].label)
-        batches.append({'text':np.array(batch_texts),
-                        'title':np.array(batch_titles),
-                        'author':np.array(batch_authors),
+        batches.append({'text':np.array(batch_texts, dtype=int),
+                        'title':np.array(batch_titles, dtype=int),
+                        'author':np.array(batch_authors, dtype=int),
                         'label':np.array(batch_labels, dtype='float32')})
         offset += batch_size
     return batches
